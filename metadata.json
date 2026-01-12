@@ -1,0 +1,5 @@
+{
+  "name": "ToolBox",
+  "description": "A comprehensive suite of developer utilities including markdown converters, text splitters, timers, TTS, prompt templates, and color debugging tools.",
+  "requestFramePermissions": []
+}
