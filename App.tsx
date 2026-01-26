@@ -12,7 +12,9 @@ import {
     StickyNote,
     Menu, 
     X,
-    Wrench
+    Wrench,
+    Wand2,
+    Brain
 } from 'lucide-react';
 
 // Tool Components
@@ -25,12 +27,16 @@ import PromptTemplate from './components/tools/PromptTemplate';
 import ColorDebugger from './components/tools/ColorDebugger';
 import DualTextbox from './components/tools/DualTextbox';
 import TemplateNote from './components/tools/TemplateNote';
+import PromptGenerator from './components/tools/PromptGenerator';
+import NotebookLMGenerator from './components/tools/NotebookLMGenerator';
 
 const Navigation = ({ onClose }: { onClose?: () => void }) => {
     const navItems = [
         { path: '/note', icon: StickyNote, label: 'Temporary Note' },
         { path: '/dual', icon: Columns, label: 'Dual Textbox' },
         { path: '/prompt', icon: FileJson, label: 'Prompt Variables' },
+        { path: '/notebook-lm', icon: Brain, label: 'NotebookLM Prompt' },
+        { path: '/generator', icon: Wand2, label: 'Portrait Prompt Gen' },
         { path: '/colors', icon: Palette, label: 'Color Pallete' },
         { path: '/splitter', icon: Scissors, label: 'Text Splitter' },
         { path: '/timer', icon: Timer, label: 'Timer' },
@@ -69,6 +75,8 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
     // Get current title based on path
     const getTitle = () => {
         switch(location.pathname) {
+            case '/generator': return 'Portrait Prompt Gen';
+            case '/notebook-lm': return 'NotebookLM Prompt';
             case '/jina': return 'Jina Reader';
             case '/md-to-js': return 'MD to JS String';
             case '/splitter': return 'Text Splitter';
@@ -152,7 +160,9 @@ const App = () => {
         <HashRouter>
             <Layout>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/note" replace />} />
+                    <Route path="/" element={<Navigate to="/generator" replace />} />
+                    <Route path="/generator" element={<PromptGenerator />} />
+                    <Route path="/notebook-lm" element={<NotebookLMGenerator />} />
                     <Route path="/jina" element={<JinaMarkdown />} />
                     <Route path="/md-to-js" element={<MarkdownToJs />} />
                     <Route path="/splitter" element={<TextSplitter />} />
