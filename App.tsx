@@ -160,7 +160,7 @@ const App = () => {
         <HashRouter>
             <Layout>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/generator" replace />} />
+                    <Route path="/" element={<Navigate to="/note" replace />} />
                     <Route path="/generator" element={<PromptGenerator />} />
                     <Route path="/notebook-lm" element={<NotebookLMGenerator />} />
                     <Route path="/jina" element={<JinaMarkdown />} />
