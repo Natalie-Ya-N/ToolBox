@@ -12,7 +12,7 @@ const DEFAULTS = {
     '--c-shape-6': '#d0a215',
     '--c-data': '#AF3029',
     '--c-body': '#cbd5e1',
-    '--c-sub': '#64748b'
+    '--c-sub': '#94A3B8'
 };
 
 interface ControlRowProps {
