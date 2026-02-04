@@ -42,7 +42,7 @@ const ControlRow = ({ label, cssVar, value, onChange, onCopy, copiedKey }: Contr
                     value={value} 
                     onChange={(e) => onChange(cssVar, e.target.value)}
                     maxLength={7}
-                    className="w-20 py-1 px-2 font-mono text-[11px] font-bold text-slate-300 bg-transparent outline-none uppercase"
+                    className="w-20 py-1 px-2 font-mono text-xs font-bold text-slate-300 bg-transparent outline-none uppercase"
                 />
                 <div className="flex border-l border-slate-800 bg-slate-900/50">
                     <button 

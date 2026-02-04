@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, RotateCcw, Pause } from 'lucide-react';
 
@@ -8,12 +9,39 @@ const TimerTool = () => {
     const [timeLeft, setTimeLeft] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     
-    // Audio ref
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+    // Audio context for generating sounds
+    const audioCtxRef = useRef<AudioContext | null>(null);
 
-    useEffect(() => {
-        audioRef.current = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
-    }, []);
+    const playNotification = () => {
+        if (!audioCtxRef.current) {
+            audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        }
+        const ctx = audioCtxRef.current;
+        const now = ctx.currentTime;
+
+        // Play 5 brighter, clearer beeps, louder volume
+        [0, 0.5, 1.0, 1.5, 2.0].forEach((delay) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            // Triangle wave produces a brighter tone than sine
+            osc.type = 'triangle';
+            // Higher pitch (880Hz - A5) is easier to notice
+            osc.frequency.setValueAtTime(880, now + delay); 
+            
+            // Snappier envelope for a clear "ding"
+            gain.gain.setValueAtTime(0, now + delay);
+            // Increased volume from 0.2 to 0.6 for better noticeability
+            gain.gain.linearRampToValueAtTime(0.6, now + delay + 0.02); // Quick fade in
+            gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.4); // Smooth fade out
+
+            osc.start(now + delay);
+            osc.stop(now + delay + 0.4);
+        });
+    };
 
     useEffect(() => {
         let interval: ReturnType<typeof setInterval>;
@@ -24,9 +52,7 @@ const TimerTool = () => {
             }, 1000);
         } else if (timeLeft === 0 && isRunning) {
             setIsRunning(false);
-            if (audioRef.current) {
-                audioRef.current.play().catch(e => console.error("Audio play failed", e));
-            }
+            playNotification();
         }
 
         return () => clearInterval(interval);
@@ -40,6 +66,21 @@ const TimerTool = () => {
     };
 
     const handleStart = () => {
+        // Initialize or resume AudioContext
+        if (!audioCtxRef.current) {
+            audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        }
+        if (audioCtxRef.current.state === 'suspended') {
+            audioCtxRef.current.resume();
+        }
+
+        // Resume if paused and time remains
+        if (timeLeft > 0) {
+            setIsRunning(true);
+            return;
+        }
+
+        // Start new timer
         const h = parseInt(hours || '0', 10);
         const m = parseInt(minutes || '0', 10);
         const s = parseInt(seconds || '0', 10);
@@ -114,7 +155,7 @@ const TimerTool = () => {
                         onClick={handleStart}
                         className="flex items-center gap-3 px-10 py-4 text-xl font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-2xl transition-all shadow-lg shadow-blue-900/40 hover:scale-105 active:scale-95"
                     >
-                        <Play className="fill-current w-6 h-6" /> Start
+                        <Play className="fill-current w-6 h-6" /> {timeLeft > 0 ? "Resume" : "Start"}
                     </button>
                 ) : (
                     <button
